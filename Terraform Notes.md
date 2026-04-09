@@ -84,3 +84,64 @@ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinu
 sudo yum -y install terraform
 
 aws configure
+```
+
+## 📁 Configuration
+# File Extension
+```
+.tf
+```
+```bash
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "one" {
+  ami           = "ami-03eb6185d756497f8"
+  instance_type = "t2.micro"
+}
+```
+| Command           | Description        |
+| ----------------- | ------------------ |
+| terraform init    | Initialize plugins |
+| terraform plan    | Preview changes    |
+| terraform apply   | Create resources   |
+| terraform destroy | Delete resources   |
+
+## ⚡ Auto Approve
+```
+terraform apply --auto-approve
+terraform destroy --auto-approve
+```
+## 📊 State File
+Stores infrastructure data
+Tracks changes
+File: terraform.tfstate
+
+⚠️ Never lose this file.
+
+## 🎯 Target Resource
+```terraform destroy -target="aws_instance.one"
+```
+## 🧹 Format
+```
+terraform fmt
+```
+## 📦 Variables
+```bash
+variable "instance_type" {
+  type    = string
+  default = "t2.micro"
+}
+
+variable "instance_count" {
+  type    = number
+  default = 2
+}
+```
+```
+resource "aws_instance" "one" {
+  count         = var.instance_count
+  instance_type = var.instance_type
+}
+```

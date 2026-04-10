@@ -87,9 +87,9 @@ aws configure
 ```
 
 ## 📁 Configuration
-It will have resource configuration.
-Here we write inputs for our resource.
-Based on that input Terraform will create the real word resource
+It will have resource configuration.                                                       
+Here we write inputs for our resource.                                                   
+Based on that input Terraform will create the real word resource.                      
 ## File Extension
 ```
 .tf
@@ -117,13 +117,11 @@ terraform apply --auto-approve
 terraform destroy --auto-approve
 ```
 ## 📊 State File
-Used to store the resource information which is created by Terraform.
-To track the resource activities.
-In real time entire resource information is on state file.
-We need to keep it sage & secure.
-If we lost this file we can’t track the infrastructure
-Stores infrastructure data
-Tracks changes
+Used to store the resource information which is created by Terraform.                      
+To track the resource activities.                                                          
+In real time entire resource information is on state file.                                  
+We need to keep it sage & secure.                                                           
+If we lost this file we can’t track the infrastructure Stores infrastructure data Tracks changes.                                                                                    
 File: terraform.tfstate
 
 ⚠️ Never lose this file.
@@ -253,31 +251,31 @@ terraform init -reconfigure                            #to bring state file to l
 ```
 
 ## 🔗 Meta Arguments
-depends_on                                                                     
+**depends_on**                                                                     
 One resource creation depends on another resource.
 Used to manage dependencies of resources.
 ```
 depends_on = [aws_s3_bucket.example]
 ```
-count                                                                           
+**count**                                                                           
 Count is to create identical objects which is having same configuration.
 ```
 count = 3
 ```
-for_each
+**for_each**
 ```
 for_each = toset(["dev", "test", "prod"])
 ```
 
 ## 🔄 Lifecycle
-Prevent Destroy                                                                
+**Prevent Destroy**                                                                
 Used to prevent the resources form destroying.
 ```
 lifecycle {
   prevent_destroy = true
 }
 ```
-Create Before Destroy                                                            
+**Create Before Destroy**                                                            
 If we want to recreate any object in terraform. First of all terraform will destroy the existing object and then it will create the new object.             
 It will create new replacement object is created first , & destroyed the existing resource.
 ```
@@ -285,7 +283,7 @@ lifecycle {
   create_before_destroy = true
 }
 ```
-Ignore Changes                                                                  
+**Ignore Changes**                                                                  
 Whenever we do any changes to the infrastructure manually if I run terraform plan or if I run **terraform apply** the values will be taken to the terraform state if I want to ignore the manual changes made to my infrastructure we can use ignore changes.
 ```
 lifecycle {
@@ -318,14 +316,14 @@ module "ec2" {
 
 It is used to reduce the length of code and used for reusability of code in loop.
 ## ⚙️ Provisioners
-local Exec                                                                     
+**local Exec**                                                                     
 Used to execute commands or scripts in terraform managed resources on both local and remote.
 ```
 provisioner "local-exec" {
   command = "echo Hello"
 }
 ```
-Remote Exec                                                                    
+**Remote Exec**                                                                    
 Used to run the command on remote servers.                                     
 Once the server got created it will execute the command and scripts for installing the software’s and configuration them and even for deployment also.
 ```
@@ -342,7 +340,7 @@ Used to fetch existing infrastructure data.
 terraform import aws_instance.example i-123456
 ```
 ## 🔄 Refresh
-It will store the values when compared with real world infrastructure when we modified the Terraform values in real world infrastructure it does not replicate to state file so we need to run the command called Terraform Refresh it will refresh the state file while refreshing state file it will compare original values with the state file values if the original values are modified or change it will be replicated to state file after running **terraform refresh **command.
+It will store the values when compared with real world infrastructure when we modified the Terraform values in real world infrastructure it does not replicate to state file so we need to run the command called Terraform Refresh it will refresh the state file while refreshing state file it will compare original values with the state file values if the original values are modified or change it will be replicated to state file after running **terraform refresh**command.
 
 ```
 terraform refresh

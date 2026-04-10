@@ -158,8 +158,7 @@ resource "aws_instance" "one" {
 ```
 ## 📂 TFVARS
 ## .tfvars
-When we have multiple configuration for terraform to create resources we use tfvars to store
-different configuration.
+When we have multiple configuration for terraform to create resources we use tfvars to store different configuration.                                         
 On execution time pass the tfvars to the command it will apply the values of that file.
 ```
 instance_count = 1
@@ -186,9 +185,9 @@ output "instance_ip" {
 ```
 ## 🔄 Taint / Untaint
 It is used to recreate specific resources in infrastructure.
-Why:
-If I have an EC2 --> Crashed.
-EC2 --> Code --> main.tf
+Why:                                                                            
+If I have an EC2 --> Crashed.                                                  
+EC2 --> Code --> main.tf                                                        
 Now to recreate this EC2 separately we need to taint the resource.
 ```
 terraform taint aws_instance.one
@@ -209,30 +208,30 @@ locals {
 ```
 NOTE: Values will be updated when we change them on same workspace.
 ## 🏗️ Workspaces
-It is used to create infrastructure for multiple environment.
-It will isolate each environment.
-If we work on dev env it won’t affect test env.
-The default workspace is “default”.
-All the resource we create on terraform by default will store on “default” workspace.
+It is used to create infrastructure for multiple environment.                    
+It will isolate each environment.                                             
+If we work on dev env it won’t affect test env.                                 
+The default workspace is “default”.                                            
+All the resource we create on terraform by default will store on “default”
+workspace.                                                                       
 All workspace state files will be stored on terraform.tfstate.d folder.
 ```
-terraform workspace list        # to list the workspaces
-terraform workspace new dev     # to create workspace
-terraform workspace show        # to show current workspace
-terraform workspace select dev  # to switch to dev workspace
-terraform workspace delete dev  # to delete dev workspace
+terraform workspace list          #to list the workspaces
+terraform workspace new dev       #to create workspace
+terraform workspace show          #to show current workspace
+terraform workspace select dev    #to switch to dev workspace
+terraform workspace delete dev    #to delete dev workspace
 ```
 NOTE:
 1. We need to empty the workspace before delete.
 2. We can’t delete current workspace, we can switch and delete.
 3. We can’t delete default workspace.
-☁️ Backend (S3)
-State file is very important in terraform.
-Without state file we can’t track the infrastructure.
-If you lost it we can’t manage the infrastructure.
-Backup file is a backup of the terraform.tfstate.file
-Terraform automatically creates a backup of the state file before making any changes to the
-state file.
+## ☁️ Backend (S3)
+State file is very important in terraform.                                     
+Without state file we can’t track the infrastructure.                           
+If you lost it we can’t manage the infrastructure.                              
+Backup file is a backup of the terraform.tfstate.file                          
+Terraform automatically creates a backup of the state file before making any changes to the state file.                                                      
 This ensures that you can recover from a corrupted or lost state file.
 ```
 terraform {
@@ -244,23 +243,23 @@ terraform {
 }
 ```
 ```
-terraform state list                 # to list the resources
-terraform state show aws_subnet.two  # to show specific resource info
-terraform state mv aws_subnet.two aws_subnet.three # to move state info from one to another
-terraform state rm aws_subnet.three  # to remove state information of a resource
-terraform state pull                 # to pull state file information from backend
+terraform state list                                   #to list the resources
+terraform state show aws_subnet.two                    #to show specific resource info
+terraform state mv aws_subnet.two aws_subnet.three     #to move state info from one to another
+terraform state rm aws_subnet.three                    #to remove state information of a resource
+terraform state pull                                   #to pull state file information from backend
 terraform init -migrate-state
-terraform init -reconfigure          # to bring state file to local
+terraform init -reconfigure                            #to bring state file to local
 ```
 
 ## 🔗 Meta Arguments
-depends_on
+depends_on                                                                     
 One resource creation depends on another resource.
 Used to manage dependencies of resources.
 ```
 depends_on = [aws_s3_bucket.example]
 ```
-count
+count                                                                           
 Count is to create identical objects which is having same configuration.
 ```
 count = 3
@@ -271,26 +270,23 @@ for_each = toset(["dev", "test", "prod"])
 ```
 
 ## 🔄 Lifecycle
-Prevent Destroy
+Prevent Destroy                                                                
 Used to prevent the resources form destroying.
 ```
 lifecycle {
   prevent_destroy = true
 }
 ```
-Create Before Destroy
-If we want to recreate any object in terraform. First of all terraform will destroy the existing
-object and then it will create the new object.
+Create Before Destroy                                                            
+If we want to recreate any object in terraform. First of all terraform will destroy the existing object and then it will create the new object.             
 It will create new replacement object is created first , & destroyed the existing resource.
 ```
 lifecycle {
   create_before_destroy = true
 }
 ```
-Ignore Changes
-Whenever we do any changes to the infrastructure manually if I run terraform plan or if I run
-terraform apply the values will be taken to the terraform state if I want to ignore the manual
-changes made to my infrastructure we can use ignore changes.
+Ignore Changes                                                                  
+Whenever we do any changes to the infrastructure manually if I run terraform plan or if I run **terraform apply** the values will be taken to the terraform state if I want to ignore the manual changes made to my infrastructure we can use ignore changes.
 ```
 lifecycle {
   ignore_changes = all
@@ -305,19 +301,12 @@ Terraform will support thousands of providers in real time but among them we are
 1. OFFICIAL : Maintain by Terraform
 2. PARTNER : Maintain by Terraform & That Organization
 3. COMMUNITY : Maintain by Individuals
-```
-terraform refresh
-```
-When we run plan, apply or destroy refresh will perform automatically.
-NOTE: Change something manually and check it
-DISADVANTAGE: Sometimes it will delete all of the existing infrastructure due to some small
-sort of changes so in real time we never run this command manually.
 ## 📦 Modules
-Used for Reusable.
-It divides the code into folder structure.
-A module that has been called by another module is often referred to as a child module.
-We can publish modules for others to use, and to use modules that others have published.
-These modules are free to use, and Terraform can download them automatically.
+Used for Reusable.                                                             
+It divides the code into folder structure.                                     
+A module that has been called by another module is often referred to as a child module.                                                                        
+We can publish modules for others to use, and to use modules that others have published.                                                                    
+These modules are free to use, and Terraform can download them automatically.   
 If you specify the appropriate source and version in a module call block.
 ```
 module "ec2" {
@@ -329,17 +318,16 @@ module "ec2" {
 
 It is used to reduce the length of code and used for reusability of code in loop.
 ## ⚙️ Provisioners
+local Exec                                                                     
 Used to execute commands or scripts in terraform managed resources on both local and remote.
-Local Exec
 ```
 provisioner "local-exec" {
   command = "echo Hello"
 }
 ```
-Remote Exec
-Used to run the command on remote servers.
-Once the server got created it will execute the command and scripts for installing the
-software’s and configuration them and even for deployment also.
+Remote Exec                                                                    
+Used to run the command on remote servers.                                     
+Once the server got created it will execute the command and scripts for installing the software’s and configuration them and even for deployment also.
 ```
 provisioner "remote-exec" {
   inline = ["sudo yum update -y"]
@@ -353,22 +341,23 @@ Used to fetch existing infrastructure data.
 ```
 terraform import aws_instance.example i-123456
 ```
-🔄 Refresh
-It will store the values when compared with real world infrastructure when we modified the
-Terraform values in real world infrastructure it does not replicate to state file so we need to
-run the command called Terraform Refresh it will refresh the state file while refreshing state
-file it will compare original values with the state file values if the original values are modified
-or change it will be replicated to state file after running **terraform refresh **command.
+## 🔄 Refresh
+It will store the values when compared with real world infrastructure when we modified the Terraform values in real world infrastructure it does not replicate to state file so we need to run the command called Terraform Refresh it will refresh the state file while refreshing state file it will compare original values with the state file values if the original values are modified or change it will be replicated to state file after running **terraform refresh **command.
+
 ```
 terraform refresh
 ```
+When we run **plan**, **apply** or **destroy** refresh will perform automatically.                                                                   
+NOTE:                                                                          
+Change something manually and check it
+DISADVANTAGE: Sometimes it will delete all of the existing infrastructure due to some small sort of changes so in real time we never run this command manually.
 
 ⚠️ Avoid using manually in production.
 
 ## 📌 Version Constraints
-We can change the versions of providers plugins.
-Whenever we have new changes on the AWS console the old code might not work.
-So if you want to work with the new code window download the new provider plugins for the new code.
+We can change the versions of providers plugins.                               
+Whenever we have new changes on the AWS console the old code might not work.     
+So if you want to work with the new code window download the new provider plugins for the new code.                                                       
 In real time we update the plugins based upon our requirements.
 ```
 terraform {
@@ -402,7 +391,7 @@ Can manage manual resources using import
 
 Terraform enables:
 
-Automation
-Scalability
-Multi-cloud support
-Consistent infrastructure
+Automation                                                                      
+Scalability                                                                     
+Multi-cloud support                                                            
+Consistent infrastructure                                       

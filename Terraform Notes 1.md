@@ -340,7 +340,7 @@ Used to fetch existing infrastructure data.
 terraform import aws_instance.example i-123456
 ```
 ## 🔄 Refresh
-It will store the values when compared with real world infrastructure when we modified the Terraform values in real world infrastructure it does not replicate to state file so we need to run the command called Terraform Refresh it will refresh the state file while refreshing state file it will compare original values with the state file values if the original values are modified or change it will be replicated to state file after running **terraform refresh**command.
+It will store the values when compared with real world infrastructure when we modified the Terraform values in real world infrastructure it does not replicate to state file so we need to run the command called Terraform Refresh it will refresh the state file while refreshing state file it will compare original values with the state file values if the original values are modified or change it will be replicated to state file after running **terraform refresh** command.
 
 ```
 terraform refresh

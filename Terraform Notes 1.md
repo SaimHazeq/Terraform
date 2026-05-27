@@ -111,6 +111,7 @@ resource "aws_instance" "one" {
 | terraform apply   | Create resources   |
 | terraform destroy | Delete resources   |
 
+
 ## ⚡ Auto Approve
 ```
 terraform apply --auto-approve
@@ -122,7 +123,7 @@ To track the resource activities.
 In real time entire resource information is on state file.                                  
 We need to keep it sage & secure.                                                           
 If we lost this file we can’t track the infrastructure Stores infrastructure data Tracks changes.                                                                                    
-File: terraform.tfstate
+File = **terraform.tfstate**
 
 ⚠️ Never lose this file.
 
@@ -212,13 +213,13 @@ If we work on dev env it won’t affect test env.
 The default workspace is “default”.                                            
 All the resource we create on terraform by default will store on “default”
 workspace.                                                                       
-All workspace state files will be stored on terraform.tfstate.d folder.
+All workspace state files will be stored on **terraform.tfstate.d** folder.
 ```
-terraform workspace list          #to list the workspaces
-terraform workspace new dev       #to create workspace
-terraform workspace show          #to show current workspace
-terraform workspace select dev    #to switch to dev workspace
-terraform workspace delete dev    #to delete dev workspace
+terraform workspace list          # to list the workspaces
+terraform workspace new dev       # to create workspace
+terraform workspace show          # to show current workspace
+terraform workspace select dev    # to switch to dev workspace
+terraform workspace delete dev    # to delete dev workspace
 ```
 NOTE:
 1. We need to empty the workspace before delete.
@@ -241,41 +242,41 @@ terraform {
 }
 ```
 ```
-terraform state list                                   #to list the resources
-terraform state show aws_subnet.two                    #to show specific resource info
-terraform state mv aws_subnet.two aws_subnet.three     #to move state info from one to another
-terraform state rm aws_subnet.three                    #to remove state information of a resource
-terraform state pull                                   #to pull state file information from backend
+terraform state list                                   # to list the resources
+terraform state show aws_subnet.two                    # to show specific resource info
+terraform state mv aws_subnet.two aws_subnet.three     # to move state info from one to another
+terraform state rm aws_subnet.three                    # to remove state information of a resource
+terraform state pull                                   # to pull state file information from backend
 terraform init -migrate-state
-terraform init -reconfigure                            #to bring state file to local
+terraform init -reconfigure                            # to bring state file to local
 ```
 
 ## 🔗 Meta Arguments
-**depends_on**                                                                     
+### depends_on                                                                   
 One resource creation depends on another resource.
 Used to manage dependencies of resources.
 ```
 depends_on = [aws_s3_bucket.example]
 ```
-**count**                                                                           
+### count                                                                        
 Count is to create identical objects which is having same configuration.
 ```
 count = 3
 ```
-**for_each**
+### for_each
 ```
 for_each = toset(["dev", "test", "prod"])
 ```
 
 ## 🔄 Lifecycle
-**Prevent Destroy**                                                                
+### Prevent Destroy                                                              
 Used to prevent the resources form destroying.
 ```
 lifecycle {
   prevent_destroy = true
 }
 ```
-**Create Before Destroy**                                                            
+### Create Before Destroy                                                        
 If we want to recreate any object in terraform. First of all terraform will destroy the existing object and then it will create the new object.             
 It will create new replacement object is created first , & destroyed the existing resource.
 ```
@@ -283,22 +284,23 @@ lifecycle {
   create_before_destroy = true
 }
 ```
-**Ignore Changes**                                                                  
+### Ignore Changes                                                               
 Whenever we do any changes to the infrastructure manually if I run terraform plan or if I run **terraform apply** the values will be taken to the terraform state if I want to ignore the manual changes made to my infrastructure we can use ignore changes.
 ```
 lifecycle {
   ignore_changes = all
 }
 ```
-NOTE:
+**NOTE:**
 It is mainly used to ignore the manual changes applied to the infrastructure if you apply any
 change to the existing infrastructure manually terraform will completely ignore during the
 runtime.
+
 ## Providers
 Terraform will support thousands of providers in real time but among them we are not going to use some specific providers which is going to maintain by community.
-1. OFFICIAL : Maintain by Terraform
-2. PARTNER : Maintain by Terraform & That Organization
-3. COMMUNITY : Maintain by Individuals
+**1. OFFICIAL :** Maintain by Terraform
+**2. PARTNER :** Maintain by Terraform & That Organization
+**3. COMMUNITY :** Maintain by Individuals
 ## 📦 Modules
 Used for Reusable.                                                             
 It divides the code into folder structure.                                     
@@ -316,14 +318,14 @@ module "ec2" {
 
 It is used to reduce the length of code and used for reusability of code in loop.
 ## ⚙️ Provisioners
-**local Exec**                                                                     
+### local Exec                                                                   
 Used to execute commands or scripts in terraform managed resources on both local and remote.
 ```
 provisioner "local-exec" {
   command = "echo Hello"
 }
 ```
-**Remote Exec**                                                                    
+### Remote Exec                                                                  
 Used to run the command on remote servers.                                     
 Once the server got created it will execute the command and scripts for installing the software’s and configuration them and even for deployment also.
 ```

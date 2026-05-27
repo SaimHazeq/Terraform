@@ -111,6 +111,20 @@ resource "aws_instance" "one" {
 | terraform apply   | Create resources   |
 | terraform destroy | Delete resources   |
 
+### Terraform init 
+- Initialize the provider plugins on backend.
+- It will store information of plugin in **.terraform** folder.
+- Without plugins we can't create resources.
+- Each provider will have it's own plugin.
+### Terraform Plan
+- To create an execution plan.
+- It will take inputs given by users and plan the resource creation.
+- If we haven't given inputs for few fields it will take default values.
+### Terraform Apply
+- To create resources.
+- As per the given inputs on configuration file it will create the resources in real world.
+### Terraform Destroy
+- To delete resources
 
 ## ⚡ Auto Approve
 ```

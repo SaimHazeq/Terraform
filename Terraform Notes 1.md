@@ -395,10 +395,10 @@ terraform graph
 ```
 
 ⚠️ Important Notes
-Uses API calls (limited & slow)
-State file contains sensitive data
-Always secure your state
-Works on desired state model
+Uses API calls (limited & slow)                                                                                                                                              
+State file contains sensitive data                                                                                                                                          
+Always secure your state                                                                                                                                                    
+Works on desired state model                                                                                                                                                
 Can manage manual resources using import
 
 ## 🎯 Summary

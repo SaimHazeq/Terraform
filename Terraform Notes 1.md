@@ -311,9 +311,9 @@ change to the existing infrastructure manually terraform will completely ignore 
 runtime.
 
 ## Providers
-Terraform will support thousands of providers in real time but among them we are not going to use some specific providers which is going to maintain by community.
-**1. OFFICIAL :** Maintain by Terraform
-**2. PARTNER :** Maintain by Terraform & That Organization
+Terraform will support thousands of providers in real time but among them we are not going to use some specific providers which is going to maintain by community.          
+**1. OFFICIAL :** Maintain by Terraform                                                                                                                                     
+**2. PARTNER :** Maintain by Terraform & That Organization                                                                                                                  
 **3. COMMUNITY :** Maintain by Individuals
 ## 📦 Modules
 Used for Reusable.                                                             

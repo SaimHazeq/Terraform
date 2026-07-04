@@ -364,7 +364,7 @@ terraform refresh
 When we run **plan**, **apply** or **destroy** refresh will perform automatically.                                                                   
 NOTE:                                                                          
 Change something manually and check it
-DISADVANTAGE: Sometimes it will delete all of the existing infrastructure due to some small sort of changes so in real time we never run this command manually.
+** DISADVANTAGE**: Sometimes it will delete all of the existing infrastructure due to some small sort of changes so in real time we never run this command manually.
 
 ⚠️ Avoid using manually in production.
 

@@ -466,31 +466,187 @@ terraform apply -replace="aws_instance.<name>"
 ### 31. What is terraform untaint?  
 `terraform untaint` was used to remove the tainted status from a resource, preventing Terraform from replacing it during the next apply.**  
 
-**For example, if we accidentally marked an EC2 instance for replacement but later confirmed it was healthy, we could use untaint to cancel that replacement. This command is now deprecated along with terraform taint.**   
+**For example, if we accidentally marked an EC2 instance for replacement but later confirmed it was healthy, we could use untaint to cancel that replacement. This command is now deprecated along with terraform taint.**    
+  
 `
 terraform untaint aws_instance.<name>  
 `
+   
+### 32. What permissions should Terraform IAM roles have?   
+**I follow the principle of least privilege when configuring IAM roles for Terraform. I provide only the permission required to manage the AWS services defined in the Terraform configuration.**  
 
-How do you secure Terraform state files?    
-How do you store secrets in Terraform?    
-What permissions should Terraform IAM roles have?   
-How do you manage multiple environments (dev, stage, prod)?   
-How do you handle infrastructure drift?   
-How do you roll back Terraform changes?   
-How do you migrate Terraform state from local to remote?     
-How do you import existing infrastructure into Terraform?    
-How do you handle secrets like DB passwords?    
-What happens if someone manually changes infrastructure in AWS?    
-How do you share Terraform modules across teams?    
-Terraform apply failed halfway. What will you do?    
-State file got corrupted. How do you recover?    
-Two engineers ran Terraform apply simultaneously. What happens?    
-Terraform created duplicate resources. Why?     
-Terraform can't detect a change in infrastructure. Why?     
-How do you debug Terraform errors?
-Tell me about a Terraform project you worked on.
-How did you manage Terraform state in production?
-How did you structure Terraform code for large infrastructure?
-How do you review Terraform code in a team?
-How do you prevent accidental infrastructure deletion?
-How do you test Terraform code?
+**For example, if Terraform manages EC2, VPC and S3, I grant the necessary permissions for those services.**  
+
+**In CI/CD, such as Jenkins, I prefer using an IAM roles with temporary credentials through STS rather than storing permanent access keys. I avoid AdministratorAccess in production.**  
+
+
+### 33. How do you roll back Terraform changes?
+**Terraform doesn't provide automatic rollback like a database. If a change causes an issue, I usually revert the Terraform configuration to the previous version, run `terraform plan` to review the changes, and then apply it to restore the previous infrastructure configuration.**  
+
+**If the state file is corrupted, I can recover it using S3 versioning, after verifying it against the actual infrastructure. I also maintain Git history and S3 state backups to support recovery.**  
+
+**Important: Reverting Terraform code does not guarantee that the infrastructure can return to its exact previous state. Some changes are destructive or irreversible, so recover must be planned carefully.**  
+
+
+### 34. How do you migrate Terraform state from local to remote?  
+**First, I create an S3 bucket with encryption and versioning enabled. Then I configure the S3 backend in Terraform with the bucket name, state file key, and region.**  
+
+**I run `terraform init =migrate-state`, which migrates the existing local state file to S3 after confirmation. Finally, I run `terraform state list` and `terraform plan` to verify that all existing resources are recognized and so unexpected changes are proposed.**       
+   
+### 35. What happens if someone manually changes infrastructure in AWS?  
+**If someone manually changes infrastructure in AWS outside Terraform, it creates configuration drift.**     
+
+**We detect it by running `terraform plan`, which refreshes the actual infrastructure information and identifies differences. If the change is unauthorized, we revert it using Terraform.**  
+
+**If it's intentional, we update the Terraform configuration to match the desired infrastructure.**  
+
+**We also use IAM restrictions, AWS Config and CI/CD pipelines to minimize manual changes.**  
+
+
+### 36. How do you share Terraform modules across teams? 
+**We share Terraform modules across teams by maintaining reusable modules in a centralized Git repository or private Terraform Registry.** 
+
+**For example, we can create standard modules for VPC, EC2, security groups and EKS. Other teams can consume these modules by referencing their Git repository and specific version.**  
+
+
+### 37. Terraform apply failed halfway. What will you do?
+**If Terraform apply fails halfway, I first check the error logs to identify the failed resource and root cause.**    
+
+**Common reasons:**
+- **IAM permission issue.**
+- **Resource quota limits.**
+- **AWS API errors.**
+- **Dependency failures.**
+- **Network connectivity issues.**
+
+**I verify the Terraform state using `terraform state list` and compare it with the actual AWS infrastructure. After fixing the issue, I run `terraform plan` to review the remaining changes and execute `terraform apply` again.**  
+
+**Terraform doesn't provide automatic rollback, so I carefully verify partially created resources before retrying.**  
+
+    
+### 38. Two engineers ran Terraform apply simultaneously. What happens? 
+**If two engineers run Terraform apply simultaneously against the same remote state, Terraform state locking prevents concurrent operations.**  
+
+**The first engineer acquires the lock and proceeds, while the second engineer waits or receives a lock error. Once the first operation completes, the second engineer can retry.**  
+
+**In AWS, I use S3 native state locking with `use_lockfile = true` to prevent concurrent state modifications.**  
+
+### 39. Terraform created duplicate resources. Why?
+**Terraform can create duplicate resource when existing infrastructure is not properly tracked in its state file.**  
+
+**Common reasons include manual resource creation, missing imports, multiple state files managing the same infrastructure, or incorrect resource configuration.**  
+
+**I troubleshoot this b checking `terraform state list`, comparing it with actual AWS resources, and reviewing `terraform plan`.**  
+**Then I import existing resources where appropriate, fix the configuration, and apply only after verifying the plan.**    
+
+**Important: Remote state and locking alone do not prevent two separate Terraform states from managing the same AWS resource. You need clear ownership of resource and state files.**  
+
+
+### 40. Terraform can't detect a change in infrastructure. Why?
+**Terraform may fail to detect infrastructure changes if refresh is disabled, the resource isn't managed in Terraform state, the provider cannot detect a particular attribute, or `ignore_changes` is configured.**  
+
+**I troubleshoot by running `terraform plan` with refresh enabled, checking the state, reviewing lifecycle rules, and verifying provider capabilities and AWS API permissions.**     
+
+**Common Reasons**
+- **Refresh is disabled: `terraform plan -refresh=false`**
+- **Provider limitations: Some AWS resource attributes cannot be refreshed or detected reliably by the provider.**
+- **Resource is not managed by Terraform: If a resource is created manually and hasn't been imported, Terraform doesn't track it and won't detect its changes as drift.**
+- **Changes to ignored attributes: If you use `ignore_changes` in a lifecycle block, Terraform intentionally ignores changes to specified attributes.**
+```
+lifecycle {
+  ignore_changes  = [
+    tags
+  ]
+}
+```
+- **Eventual consistency or API issues: Sometimes cloud provider APIs take time to reflect changes, or API errors prevent Terraform from retrieving the latest information.**
+  
+
+### 41. How do you debug Terraform errors?
+**When debugging Terraform errors, I first analyze the error message to identify the failing resource and root cause.** 
+
+**Then I run `terraform fmt` and `terraform validate` to check the configuration, followed by `terraform plan` to review the proposed changes.**  
+
+**If necessary, I enable debug logging using `TF_LOG=DEBUG`. I also inspect Terraform state, verify AWS IAM permissions and provider versions, fix the issue, and run plan again before applying.**  
+
+**Common Errors:**  
+- **`AccessDenied`: Insufficient IAM permissions**
+- **`InvalidAMIID.NotFound`: Incorrect or region-specific AMI ID**
+- **`Error acquiring the state lock`: Another Terraform operation holds the lock**
+- **`Resource already exists`: Resource exists but isn't properly tracked**
+- **`Unsupported argument`: Invalid argument for the resource or provider version**
+- **`Dependency cycle`: Circular resource dependencies**
+
+
+
+### 44. Tell me about a Terraform project you worked on.
+**I worked on an AWS infrastructure automation project where we used Terraform to provision and manage cloud infrastructure across Dev, QA, and Production environments.**  
+
+**I used Terraform to create AWS resources such as VPCs, Public and Private subnets, Internet Gateway, NAT Gateway, route tables, security groups, EC2 instances, Application Load Balancer, and IAM roles.**  
+
+**I developed reusable Terraform modules for VPC, EC2, and securit groups to avoid code duplication and maintain consistency across environments.**  
+
+**For state management, I configured an S3 remote backend with encryption, versioning, and state locking to support team collaboration.**  
+
+**I also integrated Terraform with Jenkins CI/CD. Whenever infrastructure code was pushed to GitHub, Jenkins executed Terraform initialization, formatting, validation, and planning. After reviewing the plan and getting approval, we applied the changes.**   
+
+**We also used variables, locals, outputs, and environment-specific configuration files to make the infrastructure reusable and maintainable.**  
+
+**The main objective was to reduce manual infrastructure provisioning, maintain consistency across environments, and improve deployment reliability.**  
+
+
+### 45. How did you structure Terraform code for large infrastructure?
+**For a large infrastructure, I follow a modular Terraform architecture. I divide infrastructure into reusable modules such as VPC, EC2, EKS, IAM, and Security groups.**  
+
+**I maintain separate environment configurations for Dev, QA, and Production, with independent remote state files in S3. I also use variables, outputs, version constraints, and Git for maintainability.**  
+
+**Finally, I integrate Terraform with Jenkins to automate validation, planning, approval, and deployment.**    
+
+**Best Practices**
+- **Use variables instead of hardcoding values.**
+- **Use locals for common configuration and tags.**
+- **Use outputs to share information between modules.**
+- **Pin Terraform and provider version.**
+- **Follow consistent naming conventions.**
+- **Store code in Git.**
+- **Use code reviews before merging changes.**
+- **Integrate Terraform with Jenkins CI/CD.**
+
+
+
+### 46. How do you review Terraform code in a team?
+**In my team, I review Terraform code through Git Pull request. First, I check code formatting, validation, module structure, variables, and provider versions. Then I review the Terraform plan carefully to identify unexpected resource changes, replacements, or deletions.**  
+
+**I also use tools like Checkov and TFLint for security and configuration checks.**  
+
+**Finally, after approval, the changes are merged and deployed through Jenkins CI/CD.**   
+
+**Best Practices**
+- **Reusable modules are used.**
+- **No hardcoded credentials or secrets.**
+- **Least-privilege IAM permissions.**
+- **Correct variable and output definitions.**
+- **Remote state and locking configuration.**
+- **Terraform and provider versions are pinned.**
+
+**Tools**
+- **Checkov: Detects infrastructure security misconfigurations.**
+- **TFLint: Identifies Terraform configuration issues.**
+- **Trivy: Scans IaC configurations for security risks.**
+
+
+### 47. How do you prevent accidental infrastructure deletion?
+**To prevent accidental infrastructure deletion, I use Terraform's `prevent_destroy = true` lifecycle rule for critical resources like production databases.**  
+
+**I also review Terraform plans before applying changes, implement manual approval in Jenkins for production deployments, and restrict deletion permissions through IAM.**  
+
+**Additionally, I enable AWS service-level deletion protection and maintain remote state backups in S3.**  
+```
+resource "aws_db_instance" "production" {
+  identifier  = "prod-database"
+
+  lifecycle {
+    prevent_destroy  = true
+  }
+}
+```

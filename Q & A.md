@@ -379,12 +379,98 @@ resource "aws_instance" "web" {
 
      
 ### 27. What are dynamic blocks? 
+**Dynamic block in Terraform are used to generate repeated nested blocks dynamically.**    
+  
+**They work with `for_each` to iterate over a list or map and generate configuration using the `content` block.** vv
+  
+**For example, I can use dynamic blocks to create multiple ingress rules in an AWS security group without manually writing each rule.**  
+```
+variable "ingress_rules" {
+  default = [
+    }
+      port = 80
+    },
+    {
+      port = 443
+    }
+  ]
+}
+
+resource "aws_security_group" "web" {
+  name = "web-sg"
+
+  dynamic "ingress" {
+    for_each = var.ingress_rules
+
+    content {
+      from_port    = ingress.value.port
+      to_port      = ingress.value.port
+      protocol     = "tcp"
+      cide_blocks  = ["0.0.0.0/0"]
+    }
+  }
+}
+```
 
 
-What is locals in Terraform?    
-What is terraform import?   
-What is terraform taint?   
-What is terraform untaint?   
+### 28. What is locals in Terraform?  
+**Locals in Terraform are used to define reusable values and expressions within a configuration. They help avoid code duplication and simplify complex expressions.**  
+
+**For example, We use locals to define common resource tags, naming conventions, and environment-specific values. We reference them using `local.variable_name`.**  
+```
+locals {
+  project_name  = "my-app"
+  environment   = "dev"
+  common_tags = {
+    project      = "my-app"
+    Environment  = "dev"
+    ManagedBy    = "Terraform"
+  }
+}
+
+resource "aws_instance" "web" {
+  ami            = "ami-1234578"
+  instance_type  = "t3.micro"
+
+  tags  = local.common_tags
+```
+
+
+### 29. What is terraform import? 
+**Terraform import is used to bring existing infrastructure under Terraform management without recreating it.**  
+
+**For example, if an EC2 instance was created manually in AWS, We can import it using its instance ID. Terraform adds the resource association to the state file, and then we write or verify the configuration and run a plan to ensure everything matches.**    
+```
+terraform import aws_instance.web i-12345789abcdefg
+
+#Using `import` block:
+import {
+  to  = aws_instance.web
+  id  = "i-12345789abcdefg
+}
+```
+
+
+### 30. What is terraform taint?  
+**`terraform taint` was used to mark a resource for forced replacement during the next apply.**     
+  
+**For example, if an EC2 instance was corrupted, We could mark it for recreation. However, this command is deprecated, and the modern approach is to use `terraform plan -replace` and `terraform apply -replace`.**  
+```
+terraform taint aws_instance.<name>
+terraform apply
+  
+terraform plan -replace="aws_instance.<name>"
+terraform apply -replace="aws_instance.<name>"
+```
+
+### 31. What is terraform untaint?  
+`terraform untaint` was used to remove the tainted status from a resource, preventing Terraform from replacing it during the next apply.**  
+
+**For example, if we accidentally marked an EC2 instance for replacement but later confirmed it was healthy, we could use untaint to cancel that replacement. This command is now deprecated along with terraform taint.**   
+`
+terraform untaint aws_instance.<name>  
+`
+
 How do you secure Terraform state files?    
 How do you store secrets in Terraform?    
 What permissions should Terraform IAM roles have?   

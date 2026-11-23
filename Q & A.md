@@ -40,7 +40,7 @@ resource "aws_instance" "web" {
 - **Identify changes.**
 - **Determine what needs to be created, updated, or destroyed.**
 
-**5. Modules**
+**5. Modules**  
 **Modules are reusable collection of Terraform configuration files.**   
 **That help:**  
 - **Avoid code duplication.**

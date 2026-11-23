@@ -50,9 +50,9 @@ resource "aws_instance" "web" {
 **For example, we can create a reusable VPC modules and use it in Dev, QA, and Prod.**
 
   
-**Terraform has several core components, including configuration files, providers, resources, state file, and modules.**  
+**"Terraform has several core components, including configuration files, providers, resources, state file, and modules.**  
 **Configuration files define the desired infrastructure, Providers interact with cloud platforms, Resource represent infrastructure components, State files track managed resources, and Modules help us create reusable configurations.**  
-**Together, these components help automate and manage infrastructure efficiently.**
+**Together, these components help automate and manage infrastructure efficiently."**
 
 
 ### 4. What is the Terraform workflow?

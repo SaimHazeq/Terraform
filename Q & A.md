@@ -49,6 +49,10 @@ resource "aws_instance" "web" {
 - **Reuse infrastructure across environments.**
 **For example, we can create a reusable VPC modules and use it in Dev, QA, and Prod.**
 
+**Terraform has several core components, including configuration files, providers, resources, state file, and modules.**  
+**Configuration files define the desired infrastructure, Providers interact with cloud platforms, Resource represent infrastructure components, State files track managed resources, and Modules help us create reusable configurations.**  
+**Together, these components help automate and manage infrastructure efficiently.**
+
 
 ### 4. What is the Terraform workflow?
 **1. Write: Define infrastructure in `.tf` files.**  
@@ -57,9 +61,7 @@ resource "aws_instance" "web" {
 **4. Apply: `terraform apply` provisions or modifies infrastructure.**  
 **5. State: Terraform updates the state file to track managed resources.**  
 
-**Terraform has several core components, including configuration files, providers, resources, state file, and modules.**  
-**Configuration files define the desired infrastructure, Providers interact with cloud platforms, Resource represent infrastructure components, State files track managed resources, and Modules help us create reusable configurations.**  
-**Together, these components help automate and manage infrastructure efficiently.**
+
 
 ### 5. What are Terraform plugins?
 **Terraform plugin are executable components that extend Terraform's functionality and allow it to interact with external platforms, services, and tools.**  

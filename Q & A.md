@@ -86,7 +86,7 @@ resource "aws_instance" "web" {
 
 
 ### 6. What is the Terraform execution plan?
-**Terraform execution plan is a preview of the infrastructure changes Terraform intends to make. We use the `terraform pla,` command to compare the configuration files with the current state and infrastructure.**   
+**Terraform execution plan is a preview of the infrastructure changes Terraform intends to make. We use the `terraform plan,` command to compare the configuration files with the current state and infrastructure.**   
   
 **It shows which resource will be created, updated, or destroyed without making actual changes. This help us review changes before applying them to production.**  
 

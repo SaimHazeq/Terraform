@@ -68,7 +68,8 @@ resource "aws_instance" "web" {
 **Terraform plugin are executable components that extend Terraform's functionality and allow it to interact with external platforms, services, and tools.**  
 **Terraform uses plugins to communicate with cloud providers and manage infrastructure resources.**  
 
-**Types of Terraform Plugins (There are 3 main types)**  
+**Types of Terraform Plugins (There are 3 main types)**   
+  
 **1. Providers**
 - **Providers allow Terraform to interact with external platforms and APIs.**
 - **They are responsible for creating, updating, and deleting infrastructure resources. (Example: AWS, Azure, GCP, K8s).**
